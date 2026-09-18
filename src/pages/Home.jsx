@@ -1,4 +1,20 @@
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+
 function Home() {
+  const navigate = useNavigate();
+  const [search, setSearch] = useState("");
+  const [tripType, setTripType] = useState("");
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    const params = new URLSearchParams();
+    if (search.trim()) params.set("search", search.trim());
+    if (tripType) params.set("type", tripType);
+    const qs = params.toString();
+    navigate(qs ? `/destinations?${qs}` : "/destinations");
+  };
+
   return (
     <main className="home-page">
 
@@ -19,17 +35,19 @@ function Home() {
             and carefully planned trips made just for you.
           </p>
 
-          <button className="explore-btn">
-            Explore Destinations
-          </button>
+          <button className="explore-btn" onClick={() => navigate("/destinations")}>
+                      Explore Destinations
+                    </button>
 
-          <div className="search-box">
+          <form className="search-box" onSubmit={handleSearch}>
   <input
     type="text"
     placeholder="Where do you want to go?"
+    value={search}
+    onChange={(e) => setSearch(e.target.value)}
   />
 
-  <select defaultValue="">
+  <select value={tripType} onChange={(e) => setTripType(e.target.value)}>
     <option value="" disabled>
       Select trip type
     </option>
@@ -39,10 +57,10 @@ function Home() {
     <option value="adventure">Adventure</option>
   </select>
 
-  <button className="search-btn">
+  <button type="submit" className="search-btn">
     Search
   </button>
-</div>
+</form>
 
         </div>
       </section>
@@ -64,7 +82,6 @@ function Home() {
         </p>
 
       </section>
-
     </main>
   );
 }

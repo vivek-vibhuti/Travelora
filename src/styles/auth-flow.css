@@ -1,0 +1,147 @@
+/* Forgot Password flow — enhances the shared .auth-page / .auth-box
+   shell from App.css with the polished modern accent used across the site. */
+
+.auth-flow-label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  text-align: left;
+  color: #1d3557;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.auth-flow-label select,
+.auth-flow-label input {
+  width: 100%;
+}
+
+.select-clean {
+  padding: 13px 15px;
+  border: 1px solid #ddd;
+  border-radius: 7px;
+  font-size: 15px;
+  outline: none;
+  color: #333333;
+  background-color: #ffffff;
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3e%3cpath fill='%23666' d='M6 8L0 0h12z'/%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 15px center;
+  cursor: pointer;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.select-clean:focus {
+  border-color: #0077ff;
+  box-shadow: 0 0 0 3px rgba(0, 119, 255, 0.12);
+}
+
+.auth-box .auth-heading {
+  color: #1d3557;
+  font-size: 30px;
+  font-weight: 700;
+}
+
+.auth-eye {
+  color: #f4a261;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.auth-sub {
+  color: #666666;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.auth-box .auth-question-box {
+  background: linear-gradient(135deg, #1d3557 0%, #2c4a7c 100%);
+  color: #ffffff;
+  border-radius: 12px;
+  padding: 18px 18px;
+  text-align: center;
+  margin-bottom: 6px;
+}
+
+.auth-question-box span {
+  display: block;
+  font-size: 12px;
+  color: #f4a261;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+
+.auth-question-box strong {
+  display: block;
+  font-size: 16px;
+  line-height: 1.5;
+  font-weight: 600;
+}
+
+.auth-flow-btn {
+  padding: 13px;
+  border: none;
+  border-radius: 7px;
+  background: #0077ff;
+  color: white;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.3s ease;
+}
+
+.auth-flow-btn:hover:not(:disabled) {
+  background: #005fcc;
+  transform: translateY(-2px);
+}
+
+.auth-flow-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.auth-message.success {
+  background-color: #e7f6ec;
+  color: #1a7f4e;
+  border: 1px solid #bfe6cc;
+}
+
+.auth-message.error {
+  background-color: #fdecea;
+  color: #c0392b;
+  border: 1px solid #f5c6c0;
+}
+
+.auth-message {
+  padding: 13px 16px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.auth-link-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-top: 4px;
+}
+
+.auth-flat-link {
+  color: #0077ff;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.auth-flat-link:hover {
+  color: #005fcc;
+  text-decoration: underline;
+}

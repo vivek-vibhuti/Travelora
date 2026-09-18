@@ -1,60 +1,67 @@
+import { useNavigate, useSearchParams } from "react-router-dom";
+import destinations from "../data/destinations";
+
+const tripTypeKeywords = {
+  beach: ["beach", "maldives", "goa", "island"],
+  mountain: ["mountain", "switzerland", "alpine", "himalaya"],
+  city: ["city", "dubai", "paris", "london", "tokyo"],
+  adventure: ["adventure", "safari", "desert", "trek"],
+};
+
+function matchesType(destination, type) {
+  if (!type) return true;
+  const keywords = tripTypeKeywords[type];
+  if (!keywords) return true;
+  const haystack = [
+    destination.name,
+    destination.country,
+    destination.description,
+    destination.longDescription,
+    ...(destination.highlights || []),
+  ]
+    .join(" ")
+    .toLowerCase();
+  return keywords.some((kw) => haystack.includes(kw));
+}
+
+function inferType(text) {
+  const lower = text.toLowerCase();
+  for (const [type, keywords] of Object.entries(tripTypeKeywords)) {
+    if (keywords.some((kw) => lower.includes(kw))) return type;
+  }
+  return null;
+}
+
 function Destinations() {
-  const destinations = [
-    {
-      id: 1,
-      name: "Bali",
-      country: "Indonesia",
-      description:
-        "Relax on beautiful beaches, explore temples, and experience Bali's unique culture.",
-      image:
-        "https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=900&q=80",
-    },
-    {
-      id: 2,
-      name: "Dubai",
-      country: "United Arab Emirates",
-      description:
-        "Experience luxury, modern architecture, desert adventures, and unforgettable city views.",
-      image:
-        "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&w=900&q=80",
-    },
-    {
-      id: 3,
-      name: "Paris",
-      country: "France",
-      description:
-        "Discover iconic landmarks, charming streets, world-class food, and romantic experiences.",
-      image:
-        "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?auto=format&fit=crop&w=900&q=80",
-    },
-    {
-      id: 4,
-      name: "Maldives",
-      country: "Maldives",
-      description:
-        "Enjoy crystal-clear waters, tropical islands, peaceful beaches, and luxurious resorts.",
-      image:
-        "https://images.unsplash.com/photo-1514282401047-d79a71a590e8?auto=format&fit=crop&w=900&q=80",
-    },
-    {
-      id: 5,
-      name: "Switzerland",
-      country: "Switzerland",
-      description:
-        "Explore breathtaking mountains, beautiful lakes, scenic villages, and unforgettable landscapes.",
-      image:
-        "https://images.unsplash.com/photo-1530122037265-a5f1f91d3b99?auto=format&fit=crop&w=900&q=80",
-    },
-    {
-      id: 6,
-      name: "Goa",
-      country: "India",
-      description:
-        "Enjoy sunny beaches, Portuguese architecture, local cuisine, nightlife, and coastal adventures.",
-      image:
-        "https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?auto=format&fit=crop&w=900&q=80",
-    },
-  ];
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+
+  const search = (searchParams.get("search") || "").trim().toLowerCase();
+  const typeParam = (searchParams.get("type") || "").toLowerCase();
+
+  const normalizedType = typeParam
+    ? (tripTypeKeywords[typeParam] ? typeParam : inferType(typeParam))
+    : inferType(search);
+
+  const filtersActive = Boolean(search || normalizedType);
+
+  const filtered = destinations.filter((destination) => {
+    if (normalizedType && !matchesType(destination, normalizedType)) return false;
+    if (search) {
+      const haystack = [
+        destination.name,
+        destination.country,
+        destination.description,
+        destination.longDescription,
+      ]
+        .join(" ")
+        .toLowerCase();
+      if (!haystack.includes(search)) return false;
+    }
+    return true;
+  });
+
+  const clearFilters = () => navigate("/destinations");
 
   return (
     <main className="destinations-page">
@@ -70,10 +77,35 @@ function Destinations() {
         </p>
       </section>
 
-      <section className="destinations-grid">
+      {filtersActive && filtered.length > 0 && (
+        <p className="destinations-header results-bar">
+          Showing {filtered.length} result{filtered.length === 1 ? "" : "s"}
+          {search ? ` for "${search}"` : ""}
+          {normalizedType ? ` (${normalizedType})` : ""}
+        </p>
+      )}
 
-        {destinations.map((destination) => (
-          <article className="destination-card" key={destination.id}>
+      {filtersActive && filtered.length === 0 && (
+        <div className="destinations-header no-results">
+          <h2>No destinations match your search</h2>
+          <p>
+            Try a different keyword or trip type,{" "}
+            <a href="/destinations" onClick={(e) => { e.preventDefault(); clearFilters(); }} style={{ cursor: "pointer" }}>
+              view all destinations
+            </a>.
+          </p>
+        </div>
+      )}
+
+      {filtered.length > 0 && (
+        <section className="destinations-grid">
+
+          {filtered.map((destination) => (
+                  <article
+                    className="destination-card"
+                    key={destination.id}
+                    onClick={() => navigate(`/destination/${destination.id}`)}
+                  >
 
             <img
               src={destination.image}
@@ -95,10 +127,9 @@ function Destinations() {
             </div>
 
           </article>
-        ))}
-
-      </section>
-
+          ))}
+        </section>
+      )}
     </main>
   );
 }
